@@ -7,6 +7,7 @@ import Nuri.Parse.PartTable
 import Test.Hspec (expectationFailure, shouldBe)
 import qualified Test.Hspec.Megaparsec as P
 import Text.Megaparsec
+import Text.Megaparsec.Stream (VisualStream, TraversableStream)
 
 defaultState :: PartTable
 defaultState =
@@ -28,13 +29,13 @@ testParse parser input = fst <$> runStateT (runParserT (scn *> parser <* scn <* 
 testParse' :: ParsecT Void Text (StateT PartTable IO) a -> Text -> IO (Either (ParseErrorBundle Text Void) a, PartTable)
 testParse' parser input = runStateT (runParserT (scn *> parser <* scn <* eof) "(test)" input) defaultState
 
-shouldParse :: (ShowErrorComponent e, Stream s, Show a, Eq a) => IO (Either (ParseErrorBundle s e) a) -> a -> IO ()
+shouldParse :: (ShowErrorComponent e, VisualStream s, TraversableStream s, Stream s, Show a, Eq a) => IO (Either (ParseErrorBundle s e) a) -> a -> IO ()
 shouldParse p e = do
   r <- p
   r `P.shouldParse` e
 
 shouldParse' ::
-  (ShowErrorComponent e, Stream s, Show a, Eq a) =>
+  (ShowErrorComponent e, VisualStream s, TraversableStream s, Stream s, Show a, Eq a) =>
   IO (Either (ParseErrorBundle s e) a, PartTable) ->
   (a, PartTable) ->
   IO ()

@@ -20,7 +20,16 @@ import Text.Megaparsec.Error
     errorOffset,
   ) 
 import Text.Megaparsec.Pos (SourcePos (sourceColumn, sourceLine, sourceName), unPos)
-import Text.Megaparsec (Token, reachOffset)
+import qualified Text.Megaparsec.Stream as Stream
+import Text.Megaparsec (Token)
+import Data.Kind (Type)
+import Data.Maybe (fromMaybe, isNothing, maybe)
+import Data.Foldable (foldl', toList)
+import Data.List (intercalate)
+import Data.Text (Text)
+import Data.Char (ord)
+import Data.Function (on)
+import GHC.Base ((<|>), Multiplicity(One))
 
 hasJongseong :: String -> Bool
 hasJongseong text =
@@ -60,7 +69,7 @@ errorBundlePretty ParseErrorBundle {..} =
       (String -> String, PosState Text)
     f (o, !pst) e = (o . (outChunk ++), pst')
       where
-        (sline, pst') = reachOffset (errorOffset e) pst
+        (sline, pst') = Stream.reachOffset (errorOffset e) pst
         epos = pstateSourcePos pst'
         outChunk =
           "\n" <> "파일 '" <> sourceName epos <> "', " <> lineNumber <> "번째 줄 " <> column <> "번째 글자 :\n"
@@ -94,7 +103,7 @@ errorBundlePretty ParseErrorBundle {..} =
             FancyError _ xs ->
               S.foldl' (\a b -> max a (errorFancyLength b)) 1 xs
 
-errorItemLength :: ErrorItem (Token Text) -> Int
+errorItemLength :: forall a. ErrorItem a -> Int
 errorItemLength = \case
   Tokens ts -> NE.length ts
   _ -> 1
