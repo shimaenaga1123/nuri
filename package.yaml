@@ -20,7 +20,7 @@ extra-source-files:
 description: 함수형 한글 프로그래밍 언어
 
 dependencies:
-  - base-noprelude >= 4.12
+  - base-noprelude
   - relude
   - megaparsec
   - parser-combinators
@@ -42,7 +42,6 @@ dependencies:
   - filepath
   - process
   - cmdargs
-  - with-utf8 <= 1.0.0.0
 
 default-extensions:
   - OverloadedStrings

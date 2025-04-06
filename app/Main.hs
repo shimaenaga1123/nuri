@@ -15,7 +15,6 @@ import System.Process (callCommand)
 import System.Console.CmdArgs
 import System.Console.CmdArgs.Explicit
 import qualified Data.Text.IO.Utf8 as Utf8
-import Main.Utf8 (withUtf8)
 
 defaultHaneulPath :: FilePath
 #ifdef mingw32_HOST_OS
@@ -37,7 +36,7 @@ run = Run {
       &= versionArg [help "누리의 버전을 출력합니다."]
 
 main :: IO ()
-main = withUtf8 $ do
+main = do
   let mode = cmdArgsMode run
   let helpMessage = helpText [] HelpFormatDefault mode
   Run {src = inputPath, haneul = haneulPath, debug = isDebug} <- cmdArgs run

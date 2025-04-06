@@ -18,9 +18,9 @@ import Text.Megaparsec.Error
     ParseErrorBundle (..),
     ShowErrorComponent (..),
     errorOffset,
-  )
+  ) 
 import Text.Megaparsec.Pos (SourcePos (sourceColumn, sourceLine, sourceName), unPos)
-import Text.Megaparsec.Stream (Stream (Token, reachOffset))
+import Text.Megaparsec (Token, reachOffset)
 
 hasJongseong :: String -> Bool
 hasJongseong text =
@@ -68,7 +68,7 @@ errorBundlePretty ParseErrorBundle {..} =
             <> "|\n"
             <> lineNumber
             <> " | "
-            <> sline
+            <> fromMaybe "" sline
             <> "\n"
             <> padding
             <> "| "
@@ -79,7 +79,7 @@ errorBundlePretty ParseErrorBundle {..} =
         lineNumber = (show . unPos . sourceLine) epos
         column = (show . unPos . sourceColumn) epos
         padding = replicate (length lineNumber + 1) ' '
-        rpadding = [if isWide c then '　' else ' ' | c <- take rpshift sline]
+        rpadding = [if isWide c then '　' else ' ' | c <- take rpshift (fromMaybe "" sline)]
         rpshift = unPos (sourceColumn epos) - 1
         pointer = replicate pointerLen '^'
         pointerLen =
